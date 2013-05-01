@@ -1,0 +1,6 @@
+# 
+# ignore binaries and temp files
+# 
+*~
+*.[oa]
+
