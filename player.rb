@@ -1,8 +1,8 @@
 class Player
   def initialize
-    @max_health = 20
-    @health = @max_health
-    @min_health_to_fight = 13
+    @MAX_HEALTH = 20
+    @health = @MAX_HEALTH
+    @MIN_HEALTH_TO_FIGHT = 13
     @under_attack;
   end
   
@@ -25,24 +25,13 @@ class Player
   end
 
   def determine_strategy(warrior)
-    if under_attack?
-      engage_enemy(warrior)
-      return
-    end
-
-    if warrior.feel.captive?
-      warrior.rescue!
-      return
-    end
-
-    if warrior.feel.empty?
-      if warrior.health < @min_health_to_fight
-        warrior.rest!
-      else
-        warrior.walk!
-      end
+    return engage_enemy(warrior) if under_attack?
+    return warrior.rescue! if warrior.feel.captive?
+    return warrior.attack! unless warrior.feel.empty?
+    if warrior.health < @MIN_HEALTH_TO_FIGHT
+      warrior.rest!
     else
-        warrior.attack!
+      warrior.walk!
     end
   end
 
