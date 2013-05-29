@@ -7,7 +7,7 @@ class Player
     @direction = :backward
     @warrior
     @space
-    @fudge = 0
+    @aggression_factor = 0
   end
   
   def under_attack?
@@ -16,7 +16,7 @@ class Player
 
   def turn_start()
     @under_attack = @health > @warrior.health
-    @in_retreat = true if @warrior.health < (@MIN_HEALTH_TO_FIGHT + @fudge)
+    @in_retreat = true if @warrior.health < (@MIN_HEALTH_TO_FIGHT - @aggression_factor)
     @space = @warrior.feel(@direction)
     if @space.wall?
       @direction = :forward
@@ -45,20 +45,20 @@ class Player
   end
  
   def fight_or_flee()
-    return engage_enemy() if @warrior.health >= (@MIN_HEALTH_TO_FIGHT + @fudge)
+    return engage_enemy() if @warrior.health >= (@MIN_HEALTH_TO_FIGHT - @aggression_factor)
     retreat()
   end
 
   def retreat()
-    @fudge = 0
+    @aggression_factor = 0
     return @warrior.walk!(:backward) if under_attack?
     @warrior.rest!
   end
 
   def engage_enemy()
-    if @space.empty?
+    if @space.empty?  #if this is an archer we have to be more aggressive and close the gap
       @warrior.walk!(@direction)
-      @fudge = -4
+      @aggression_factor = 4
     else
       @warrior.attack!(@direction)
     end
