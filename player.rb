@@ -1,10 +1,12 @@
 class Player
   def initialize
-    @MAX_HEALTH = 20
-    @health = @MAX_HEALTH
-    @MIN_HEALTH_TO_FIGHT = 13
-    @under_attack;
-    @warrior;
+    @health = @MAX_HEALTH = 20
+    @MIN_HEALTH_TO_FIGHT = 10
+    @under_attack = false
+    @in_retreat = false
+    @direction = :backward
+    @warrior
+    @space
   end
   
   def under_attack?
@@ -13,10 +15,17 @@ class Player
 
   def turn_start()
     @under_attack = @health > @warrior.health
+    @in_retreat = true if @warrior.health < @MIN_HEALTH_TO_FIGHT
+    @space = @warrior.feel(@direction)
+    if @space.wall?
+      @direction = :forward
+      @space = @warrior.feel(@direction)
+    end
   end
 
   def turn_end()
     @health = @warrior.health
+    @in_retreat = false if @health == @MAX_HEALTH
   end
 
   def play_turn(warrior)
@@ -27,22 +36,28 @@ class Player
   end
 
   def determine_strategy()
-    return engage_enemy() if under_attack?
-    return @warrior.rescue! if @warrior.feel.captive?
-    return @warrior.attack! unless @warrior.feel.empty?
-    if @warrior.health < @MIN_HEALTH_TO_FIGHT
-      @warrior.rest!
-    else
-      @warrior.walk!
-    end
+    return retreat() if @in_retreat and @warrior.health != @MAX_HEALTH
+    return @warrior.rescue!(@direction) if @space.captive?
+    return fight_or_flee() if under_attack?
+    return @warrior.walk!(@direction) if @space.empty?
+    @warrior.attack!
+  end
+ 
+  def fight_or_flee()
+    return engage_enemy() if @warrior.health > @MIN_HEALTH_TO_FIGHT
+    retreat()
+  end
+
+  def retreat()
+    return @warrior.walk!(:backward) if under_attack?
+    @warrior.rest!
   end
 
   def engage_enemy()
-    # if the enemy is an archer then there is a gap to close
-    if @warrior.feel.empty?
-      @warrior.walk!
+    if @space.empty?
+      @warrior.walk!(@direction)
     else
-      @warrior.attack!
+      @warrior.attack!(@direction)
     end
   end
 end
