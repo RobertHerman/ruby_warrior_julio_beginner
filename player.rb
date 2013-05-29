@@ -1,12 +1,13 @@
 class Player
   def initialize
     @health = @MAX_HEALTH = 20
-    @MIN_HEALTH_TO_FIGHT = 10
+    @MIN_HEALTH_TO_FIGHT = 8
     @under_attack = false
     @in_retreat = false
     @direction = :backward
     @warrior
     @space
+    @fudge = 0
   end
   
   def under_attack?
@@ -15,7 +16,7 @@ class Player
 
   def turn_start()
     @under_attack = @health > @warrior.health
-    @in_retreat = true if @warrior.health < @MIN_HEALTH_TO_FIGHT
+    @in_retreat = true if @warrior.health < (@MIN_HEALTH_TO_FIGHT + @fudge)
     @space = @warrior.feel(@direction)
     if @space.wall?
       @direction = :forward
@@ -44,11 +45,12 @@ class Player
   end
  
   def fight_or_flee()
-    return engage_enemy() if @warrior.health > @MIN_HEALTH_TO_FIGHT
+    return engage_enemy() if @warrior.health >= (@MIN_HEALTH_TO_FIGHT + @fudge)
     retreat()
   end
 
   def retreat()
+    @fudge = 0
     return @warrior.walk!(:backward) if under_attack?
     @warrior.rest!
   end
@@ -56,6 +58,7 @@ class Player
   def engage_enemy()
     if @space.empty?
       @warrior.walk!(@direction)
+      @fudge = -4
     else
       @warrior.attack!(@direction)
     end
