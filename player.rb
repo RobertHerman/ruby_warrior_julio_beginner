@@ -16,7 +16,7 @@ class Player
 
   def turn_start()
     @under_attack = @previous_health > @warrior.health
-    @in_retreat = true if @warrior.health < (@MIN_HEALTH_TO_FIGHT - @aggression_factor)
+    @in_retreat = true if !healthy_enough_to_fight?
     @space = @warrior.feel(@direction)
     if @space.wall?
       @direction = :forward
@@ -62,5 +62,9 @@ class Player
     else
       @warrior.attack!(@direction)
     end
+  end
+
+  def healthy_enough_to_fight?
+    @warrior.health >= (@MIN_HEALTH_TO_FIGHT - @aggression_factor)
   end
 end
