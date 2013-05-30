@@ -2,7 +2,6 @@ class Player
   def initialize
     @previous_health = @MAX_HEALTH = 20
     @MIN_HEALTH_TO_FIGHT = 8
-    @under_attack = false
     @in_retreat = false
     @direction = :backward
     @warrior
@@ -11,11 +10,10 @@ class Player
   end
   
   def under_attack?
-    return @under_attack
+    @previous_health > @warrior.health
   end
 
   def turn_start()
-    @under_attack = @previous_health > @warrior.health
     @in_retreat = true if !healthy_enough_to_fight?
     @space = @warrior.feel(@direction)
     if @space.wall?
