@@ -1,9 +1,9 @@
 class Player
   def initialize
     @previous_health = @MAX_HEALTH = 20
-    @MIN_HEALTH_TO_FIGHT = 8
+    @MIN_HEALTH_TO_FIGHT = 10
     @in_retreat = false
-    @direction = :backward
+    @direction = :forward
     @aggression_factor = 0
   end
   
@@ -14,10 +14,6 @@ class Player
   def turn_start()
     @in_retreat = true if !healthy_enough_to_fight?
     @space = @warrior.feel(@direction)
-    if @space.wall?
-      @direction = :forward
-      @space = @warrior.feel(@direction)
-    end
   end
 
   def turn_end()
@@ -33,6 +29,7 @@ class Player
   end
 
   def determine_strategy()
+    return @warrior.pivot! if @space.wall?
     return retreat() if @in_retreat and @warrior.health != @MAX_HEALTH
     return @warrior.rescue!(@direction) if @space.captive?
     return fight_or_flee() if under_attack?

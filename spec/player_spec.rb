@@ -15,7 +15,7 @@ describe "Players action" do
   end
 
   it "should walk forward when @space is empty" do
-    @warrior.should_receive(:walk!)
+    @warrior.should_receive(:walk!).with(:forward)
     player.play_turn(@warrior)
   end
 
@@ -44,6 +44,12 @@ describe "Players action" do
     @space.stub!(:empty?).and_return(false)
     @space.stub!(:captive?).and_return(true)
     @warrior.should_receive(:rescue!)
+    player.play_turn(@warrior)
+  end
+
+  it "should turn around if it sees a wall" do
+    @space.stub!(:wall?).and_return(true)
+    @warrior.should_receive(:pivot!)
     player.play_turn(@warrior)
   end
 end
