@@ -34,7 +34,9 @@ class Player
     return fight_or_flee() if under_attack?
    
     @ahead.delete_if { |space| space.empty? }
-    return @warrior.shoot! if @ahead.first.to_s == "Wizard" or @ahead.first.to_s == "Archer"
+    if @ahead.count != 0
+      return @warrior.shoot! if @ahead.first.enemy?
+    end
 
     return @warrior.walk! if @space.empty?
     @warrior.attack!
