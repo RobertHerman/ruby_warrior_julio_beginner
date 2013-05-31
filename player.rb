@@ -4,8 +4,6 @@ class Player
     @MIN_HEALTH_TO_FIGHT = 8
     @in_retreat = false
     @direction = :backward
-    @warrior
-    @space
     @aggression_factor = 0
   end
   
@@ -30,7 +28,7 @@ class Player
   def play_turn(warrior)
     @warrior = warrior
     turn_start()
-    determine_strategy()    
+    determine_strategy()
     turn_end()
   end
 
