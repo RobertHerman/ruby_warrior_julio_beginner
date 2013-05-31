@@ -11,7 +11,8 @@ class Player
 
   def turn_start()
     @in_retreat = true if !healthy_enough_to_fight?
-    @space = @warrior.feel
+    @ahead = @warrior.look
+    @space = @ahead.shift
   end
 
   def turn_end()
@@ -27,10 +28,14 @@ class Player
   end
 
   def determine_strategy()
-    return @warrior.pivot! if @space.wall?
     return retreat() if @in_retreat and @warrior.health != @MAX_HEALTH
+    return @warrior.pivot! if @space.wall?
     return @warrior.rescue! if @space.captive?
     return fight_or_flee() if under_attack?
+   
+    @ahead.delete_if { |space| space.empty? }
+    return @warrior.shoot! if @ahead.first.to_s == "Wizard"
+
     return @warrior.walk! if @space.empty?
     @warrior.attack!
   end
