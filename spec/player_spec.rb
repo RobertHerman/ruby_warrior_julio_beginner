@@ -15,7 +15,7 @@ describe "Players action" do
   end
 
   it "should walk forward when @space is empty" do
-    @warrior.should_receive(:walk!).with(:forward)
+    @warrior.should_receive(:walk!)
     player.play_turn(@warrior)
   end
 

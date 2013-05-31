@@ -3,7 +3,6 @@ class Player
     @previous_health = @MAX_HEALTH = 20
     @MIN_HEALTH_TO_FIGHT = 10
     @in_retreat = false
-    @direction = :forward
     @aggression_factor = 0
   end
   
@@ -13,7 +12,7 @@ class Player
 
   def turn_start()
     @in_retreat = true if !healthy_enough_to_fight?
-    @space = @warrior.feel(@direction)
+    @space = @warrior.feel
   end
 
   def turn_end()
@@ -31,9 +30,9 @@ class Player
   def determine_strategy()
     return @warrior.pivot! if @space.wall?
     return retreat() if @in_retreat and @warrior.health != @MAX_HEALTH
-    return @warrior.rescue!(@direction) if @space.captive?
+    return @warrior.rescue! if @space.captive?
     return fight_or_flee() if under_attack?
-    return @warrior.walk!(@direction) if @space.empty?
+    return @warrior.walk! if @space.empty?
     @warrior.attack!
   end
  
@@ -50,10 +49,10 @@ class Player
 
   def engage_enemy()
     if @space.empty?  #if this is an archer we have to be more aggressive and close the gap
-      @warrior.walk!(@direction)
+      @warrior.walk!
       @aggression_factor = 4
     else
-      @warrior.attack!(@direction)
+      @warrior.attack!
     end
   end
 
