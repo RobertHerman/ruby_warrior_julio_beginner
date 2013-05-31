@@ -1,7 +1,7 @@
 class Player
   def initialize
     @previous_health = @MAX_HEALTH = 20
-    @MIN_HEALTH_TO_FIGHT = 10
+    @MIN_HEALTH_TO_FIGHT = 4
     @in_retreat = false
   end
   
@@ -34,7 +34,7 @@ class Player
     return fight_or_flee() if under_attack?
    
     @ahead.delete_if { |space| space.empty? }
-    return @warrior.shoot! if @ahead.first.to_s == "Wizard"
+    return @warrior.shoot! if @ahead.first.to_s == "Wizard" or @ahead.first.to_s == "Archer"
 
     return @warrior.walk! if @space.empty?
     @warrior.attack!
